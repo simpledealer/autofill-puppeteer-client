@@ -1,0 +1,9 @@
+{
+  "name": "autofill-client",
+  "version": "0.1.0",
+  "description": "Web client to create autofill requests and connect to autofill-daemon",
+  "main": "index.js",
+  "repository": "git@github.com:simpledealer/autofill-client.git",
+  "author": "r44j <raaj.ahab@gmail.com>",
+  "license": "MIT"
+}
