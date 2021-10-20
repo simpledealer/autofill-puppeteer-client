@@ -7,6 +7,7 @@
   "repository": "git@github.com:simpledealer/autofill-client.git",
   "author": "r44j <raaj.ahab@gmail.com>",
   "license": "MIT",
+  "private": false,
   "dependencies": {
     "@meltwater/phi": "^4.1.0",
     "@simple-dealer/asset-life-cycle": "^1.6.0",
