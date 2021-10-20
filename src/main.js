@@ -1,12 +1,13 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { path, always } from 'ramda'
+import { path, always, isNil, not } from 'ramda'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 
 export default ({
   s3: { accessKeyId, secretAccessKey, region },
-  getVersion = always('v1')
+  getVersion = always('v1'),
+  testValue = true
 }) => async creditApplication => {
   const applicationId = path(['mainApplicant', 'id'], creditApplication)
   const dealershipId = path(['mainApplicant', 'dealership', 'id'], creditApplication)
@@ -26,7 +27,6 @@ export default ({
   await pendingRequest.queue({ body: JSON.stringify(creditApplication), ttl: 864000 })
   const requestKey = pendingRequest.getKey()
   await connectDaemon(requestKey)
-  const request = await receivedRequest.isAvailable()
-  console.log("The actual request", request)
-  return request
+  if(not(isNil(testValue))) return testValue
+  return receivedRequest.isAvailable()
 }
