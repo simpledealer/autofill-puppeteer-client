@@ -26,5 +26,7 @@ export default ({
   await pendingRequest.queue({ body: JSON.stringify(creditApplication), ttl: 864000 })
   const requestKey = pendingRequest.getKey()
   await connectDaemon(requestKey)
-  return receivedRequest.isAvailable()
+  const request = await receivedRequest.isAvailable()
+  console.log("The actual request", request)
+  return request
 }
