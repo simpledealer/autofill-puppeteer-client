@@ -1,6 +1,6 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { toJson, path, always } from '@meltwater/phi'
+import { path, always } from 'ramda'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 
@@ -23,7 +23,7 @@ export default ({
   })((prefix))
   const pendingRequest = await assetClient({ ...requestMetadata, assetType: 'status/pending' })
   const receivedRequest = await assetClient({ ...requestMetadata, assetType: 'status/received' })
-  await pendingRequest.queue({ body: toJson(creditApplication), ttl: 864000 })
+  await pendingRequest.queue({ body: JSON.stringify(creditApplication), ttl: 864000 })
   const requestKey = pendingRequest.getKey()
   await connectDaemon(requestKey)
   return receivedRequest.isAvailable()

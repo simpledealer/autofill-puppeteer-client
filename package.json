@@ -9,11 +9,11 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "@meltwater/phi": "^4.1.0",
     "@simple-dealer/asset-life-cycle": "^1.6.0",
     "axios": "^0.23.0",
     "date-fns": "^2.25.0",
     "esm": "^3.2.25",
+    "ramda": "^0.27.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
