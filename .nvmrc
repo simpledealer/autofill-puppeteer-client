@@ -1,0 +1,2 @@
+lts/fermium
+scripts-prepend-node-path=true
