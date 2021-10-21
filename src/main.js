@@ -7,11 +7,19 @@ import connectDaemon from './util/connect-daemon'
 export default ({
   s3: { accessKeyId, secretAccessKey, region },
   getVersion = always('v1'),
-  testValue = true
-}) => async creditApplication => {
-  const applicationId = path(['mainApplicant', 'id'], creditApplication)
-  const dealershipId = path(['mainApplicant', 'dealership', 'id'], creditApplication)
+  testValue
+}) => async ({
+  mainApplicant,
+  coApplicant,
+  deal,
+  userInformation,
+  version = '3.2.0',
+  lenders
+}) => {
+  const applicationId = path(['id'], mainApplicant)
+  const dealershipId = path(['dealership', 'id'], mainApplicant)
   const prefix = getDatePrefix()
+  const requestBody = JSON.stringify({ mainApplicant, coApplicant, deal, userInformation, version, lenders })
   const requestMetadata = {
     uuid: getUuid(),
     resultOrQueue: 'queue',
@@ -24,7 +32,7 @@ export default ({
   })((prefix))
   const pendingRequest = await assetClient({ ...requestMetadata, assetType: 'status/pending' })
   const receivedRequest = await assetClient({ ...requestMetadata, assetType: 'status/received' })
-  await pendingRequest.queue({ body: JSON.stringify(creditApplication), ttl: 864000 })
+  await pendingRequest.queue({ body: requestBody, ttl: 864000 })
   const requestKey = pendingRequest.getKey()
   await connectDaemon(requestKey)
   if(not(isNil(testValue))) return testValue
