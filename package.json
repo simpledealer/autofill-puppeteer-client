@@ -1,6 +1,6 @@
 {
   "name": "@simple-dealer/autofill-puppeteer-client",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Web client to create autofill requests and connect to autofill-daemon",
   "module": "src/main.js",
   "main": "src/index.js",
