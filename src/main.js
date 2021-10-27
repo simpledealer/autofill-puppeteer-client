@@ -1,6 +1,6 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { path, always, isNil, not } from 'ramda'
+import { path, always, isNil, not, ifElse } from 'ramda'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 
@@ -34,7 +34,15 @@ export default ({
   const receivedRequest = await assetClient({ ...requestMetadata, assetType: 'status/received' })
   await pendingRequest.queue({ body: requestBody, ttl: 864000 })
   const requestKey = pendingRequest.getKey()
-  await connectDaemon(requestKey)
-  if(not(isNil(testValue))) return testValue
-  return receivedRequest.isAvailable()
+  try{
+    await connectDaemon(requestKey)
+    const autofillStarted = await receivedRequest.isAvailable()
+    return ifElse(
+      always(autofillStarted),
+      always({ success: true, code: 'AutofillStarted' }),
+      always({ success: false, code: 'AutofillUnknownFailure' })
+    )()
+  }catch (e) {
+    console.log(e)
+  }
 }
