@@ -36,15 +36,14 @@ const s3 = {
 const autofillPayload = {}
 
 const autoFillClient = createAutoFillClient({ s3 })
-const { success, code } = await autoFillClient(autofillPayload);
-
-if(!success) {
-  if(equals(code, 'AutofillDaemonNotInstalled')) download()
-  if(equals(code, 'AutofillUnknownError')) alert('Unknown error occurred')
-  return
+const downloadAutofillDaemon = createDownloadAutofillDaemon()
+try{
+  await autoFillClient({ ...payload, mainApplicant: selectedApplication });
+  alert('Autofill started')
+}catch (e) {
+  if(equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
+  if(equals(e, errors.AutofillUnknownError)) alert ('Unknown error occurred')
 }
-
-console.log('Autofill started')
 ```
 
 ### Get detailed parameters - [here](https://www.notion.so/simpledealer/Autofill-Puppeteer-Client-53aa3fa94d9a4e858cac861b567a1779)
