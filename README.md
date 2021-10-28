@@ -38,7 +38,7 @@ const autofillPayload = {}
 const autoFillClient = createAutoFillClient({ s3 })
 const downloadAutofillDaemon = createDownloadAutofillDaemon()
 try{
-  await autoFillClient({ ...payload, mainApplicant: selectedApplication });
+  await autoFillClient(autofillPayload);
   alert('Autofill started')
 }catch (e) {
   if(equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
