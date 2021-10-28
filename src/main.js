@@ -1,13 +1,13 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { path, always, isNil, not, ifElse, equals } from 'ramda'
+import { path, always, not } from 'ramda'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
+import errors from './util/errors'
 
 export default ({
   s3: { accessKeyId, secretAccessKey, region },
-  getVersion = always('v1'),
-  testValue
+  getVersion = always('v1')
 }) => async ({
   mainApplicant,
   coApplicant,
@@ -34,21 +34,11 @@ export default ({
   const receivedRequest = await assetClient({ ...requestMetadata, assetType: 'status/received' })
   await pendingRequest.queue({ body: requestBody, ttl: 864000 })
   const requestKey = pendingRequest.getKey()
-  try{
-    await connectDaemon(requestKey)
-    const autofillStarted = await receivedRequest.isAvailable()
-    return ifElse(
-      always(autofillStarted),
-      always({ success: true, code: 'AutofillStarted' }),
-      always({ success: false, code: 'AutofillUnknownError' })
-    )()
-  }catch (e) {
-    return ifElse(
-      () => equals(e.name, 'AutofillDaemonNotInstalled'),
-      always({ success: false, code: 'AutofillDaemonNotInstalled' }),
-      always({ success: false, code: 'AutofillUnknownError' })
-    )()
-  }
+  await connectDaemon(requestKey)
+  const autofillStarted = await receivedRequest.isAvailable()
+  if(not(autofillStarted)) throw errors.AutofillUnknownError
+  return autofillStarted
 }
 
-export const download = () => window.location.href = 'https://github.com/simpledealer/autofill-daemon/releases/download/v0.1.0/Simple.Dealer.Autofill-0.1.0.dmg'
+export const createDownloadAutofillDaemon = () => () => window.location.href = 'https://github.com/simpledealer/autofill-daemon/releases/download/v0.1.0/Simple.Dealer.Autofill-0.1.0.dmg'
+export const errors = errors
