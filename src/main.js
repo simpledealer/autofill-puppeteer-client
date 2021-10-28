@@ -40,5 +40,6 @@ export default ({
   return autofillStarted
 }
 
-export const createDownloadAutofillDaemon = () => () => window.location.href = 'https://github.com/simpledealer/autofill-daemon/releases/download/v0.1.0/Simple.Dealer.Autofill-0.1.0.dmg'
-export const errors = errors
+const createDownloadAutofillDaemon = () => () => window.location.href = 'https://github.com/simpledealer/autofill-daemon/releases/download/v0.1.0/Simple.Dealer.Autofill-0.1.0.dmg'
+
+export { errors, createDownloadAutofillDaemon }
