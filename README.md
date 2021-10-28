@@ -46,3 +46,5 @@ if(!success) {
 
 console.log('Autofill started')
 ```
+
+### Get detailed parameters - [here](https://www.notion.so/simpledealer/Autofill-Puppeteer-Client-53aa3fa94d9a4e858cac861b567a1779)
