@@ -1,6 +1,6 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { path, always, isNil, not, ifElse } from 'ramda'
+import { path, always, isNil, not, ifElse, equals } from 'ramda'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 
@@ -40,9 +40,15 @@ export default ({
     return ifElse(
       always(autofillStarted),
       always({ success: true, code: 'AutofillStarted' }),
-      always({ success: false, code: 'AutofillUnknownFailure' })
+      always({ success: false, code: 'AutofillUnknownError' })
     )()
   }catch (e) {
-    console.log(e)
+    return ifElse(
+      () => equals(e.name, 'AutofillDaemonNotInstalled'),
+      always({ success: false, code: 'AutofillDaemonNotInstalled' }),
+      always({ success: false, code: 'AutofillUnknownError' })
+    )()
   }
 }
+
+export const download = () => window.location.href = 'https://github.com/simpledealer/autofill-daemon/releases/download/v0.1.0/Simple.Dealer.Autofill-0.1.0.dmg'
