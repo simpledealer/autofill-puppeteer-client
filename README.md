@@ -25,7 +25,7 @@ $ yarn add @simple-dealer/autofill-puppeteer-client
 ### Connect to autofill client
 
 ```js
-import createAutoFillClient, { download } from '@simple-dealer/autofill-puppeteer-client'
+import createAutoFillClient, { createDownloadAutofillDaemon, errors } from '@simple-dealer/autofill-puppeteer-client'
 
 const s3 = { 
   accessKeyId: '',
