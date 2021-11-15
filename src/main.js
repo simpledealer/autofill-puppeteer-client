@@ -1,6 +1,6 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { path, always, not } from 'ramda'
+import { path, always, not, or } from 'ramda'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 import errors from './util/errors'
@@ -40,6 +40,14 @@ export default ({
   return autofillStarted
 }
 
-const createDownloadAutofillDaemon = () => () => window.location.href = 'https://github.com/simpledealer/autofill-daemon/releases/download/v0.1.0/Simple.Dealer.Autofill-0.1.0.dmg'
+const createDownloadAutofillDaemon = () => () => {
+  const platform = navigator.userAgentData.platform
+  const isWindows = or('Win32', 'Win64')
+  if(isWindows(platform)) {
+    window.location.href = 'https://autofill-daemon-executables.s3.amazonaws.com/win/Simple-Dealer-Autofill-Setup-latest.exe'
+  } else{
+    window.location.href = 'https://autofill-daemon-executables.s3.amazonaws.com/mac/Simple-Dealer-Autofill-Setup-latest.dmg'
+  }
+}
 
 export { errors, createDownloadAutofillDaemon }
