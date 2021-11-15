@@ -27,7 +27,7 @@ export default ({
     dealershipId
   }
   const assetClient = createAssetClient({
-    s3: { accessKeyId, secretAccessKey, region, bucket: 'autofill-daemon' },
+    s3: { accessKeyId, secretAccessKey, region, bucket: 'autofill-daemon-data' },
     getVersion
   })((prefix))
   const pendingRequest = await assetClient({ ...requestMetadata, assetType: 'status/pending' })
