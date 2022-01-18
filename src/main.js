@@ -1,9 +1,15 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { path, always, not } from 'ramda'
+import { path, always, not, includes } from 'ramda'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 import errors from './util/errors'
+
+export const autofillTypes = ['lender', 'ofac']
+
+export const validateAutofillType = autofillType => {
+  if (not(includes(autofillType, autofillTypes))) throw errors.AutofillInvalidTypeError
+}
 
 export default ({
   s3: { accessKeyId, secretAccessKey, region },
@@ -14,12 +20,14 @@ export default ({
   deal,
   userInformation,
   version = '3.2.0',
-  lenders
+  lenders,
+  type = 'lender'
 }) => {
+  validateAutofillType(type)
   const applicationId = path(['id'], mainApplicant)
   const dealershipId = path(['dealership', 'id'], mainApplicant)
   const prefix = getDatePrefix()
-  const requestBody = JSON.stringify({ mainApplicant, coApplicant, deal, userInformation, version, lenders })
+  const requestBody = JSON.stringify({ mainApplicant, coApplicant, deal, userInformation, version, lenders, type })
   const requestMetadata = {
     uuid: getUuid(),
     resultOrQueue: 'queue',

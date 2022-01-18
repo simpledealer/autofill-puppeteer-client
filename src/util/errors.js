@@ -4,7 +4,11 @@ DaemonNotInstalledError.name = 'AutofillDaemonNotInstalled'
 const AutofillUnknownError = new Error('AutofillUnknownError')
 AutofillUnknownError.name = 'AutofillUnknownError'
 
+const AutofillInvalidTypeError = new Error('AutofillInvalidType')
+AutofillInvalidTypeError.name = 'AutofillInvalidType'
+
 export default {
   DaemonNotInstalledError,
-  AutofillUnknownError
+  AutofillUnknownError,
+  AutofillInvalidTypeError
 }
