@@ -1,6 +1,6 @@
 import errors from './errors'
 
-const TIMEOUT = 10_000 // Ten seconds
+const TIMEOUT = 10000
 
 export default key => new Promise((resolve, reject) => {
   const timeoutId = setTimeout(() => {
