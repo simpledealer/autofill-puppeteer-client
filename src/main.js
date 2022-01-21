@@ -5,7 +5,7 @@ import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 import errors from './util/errors'
 
-export const autofillTypes = ['lender', 'ofac']
+export const autofillTypes = ['lender', 'ofac', 'test']
 
 export const validateAutofillType = autofillType => {
   if (not(includes(autofillType, autofillTypes))) throw errors.AutofillInvalidTypeError
