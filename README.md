@@ -69,4 +69,28 @@ try{
 }
 ```
 
+### Test Lender
+```js
+try{
+  await autoFillClient({
+    lenders: [
+      {
+        "exists": true,
+        "platform": "sheffield",
+        "name": "sheffield",
+        "credentials": {
+          "username": "",
+          "password": ""
+        }
+      }
+    ],
+    type: 'test'
+  })
+  alert('Autofill started')
+}catch (e) {
+  if(equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
+  if(equals(e, errors.AutofillUnknownError)) alert ('Unknown error occurred')
+}
+```
+
 ### Get detailed parameters - [here](https://www.notion.so/simpledealer/Autofill-Puppeteer-Client-53aa3fa94d9a4e858cac861b567a1779)
