@@ -23,7 +23,6 @@ $ yarn add @simple-dealer/autofill-puppeteer-client
 
 
 ### Connect to autofill client
-
 ```js
 import createAutoFillClient, { createDownloadAutofillDaemon, errors } from '@simple-dealer/autofill-puppeteer-client'
 
@@ -33,12 +32,36 @@ const s3 = {
   region: ''
 };
 
-const autofillPayload = {}
 
 const autoFillClient = createAutoFillClient({ s3 })
 const downloadAutofillDaemon = createDownloadAutofillDaemon()
+```
+
+### Autofill lender
+```js
 try{
-  await autoFillClient(autofillPayload);
+  await autoFillClient({
+    lenders,
+    mainApplicant,
+    coApplicant, 
+    deal,
+    userInformation,
+    type: 'lender'
+  })
+  alert('Autofill started')
+}catch (e) {
+  if(equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
+  if(equals(e, errors.AutofillUnknownError)) alert ('Unknown error occurred')
+}
+```
+
+### Autofill OFAC
+```js
+try{
+  await autoFillClient({
+    mainApplicant,
+    type: 'ofac'
+  })
   alert('Autofill started')
 }catch (e) {
   if(equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
