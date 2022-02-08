@@ -1,9 +1,12 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { path, always, not, includes } from 'ramda'
+import { path, always, not, includes, prop } from 'ramda'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 import errors from './util/errors'
+import yaml from 'js-yaml';
+
+const baseDaemonS3Bucket = 'https://autofill-daemon-executables.s3.amazonaws.com'
 
 export const autofillTypes = ['lender', 'ofac', 'test']
 
@@ -48,8 +51,11 @@ export default ({
   return autofillStarted
 }
 
-const createDownloadAutofillDaemon = () => () => {
-  window.location.href = 'https://autofill-daemon-executables.s3.amazonaws.com/win/Simple-Dealer-Autofill-Setup-latest.exe'
+const createDownloadAutofillDaemon = () => async () => {
+  const {data: latestYaml} = await axios.get(`${baseDaemonS3Bucket}/latest.yml`)
+  const latestJSON = yaml.load(latestYaml)
+  const latestDaemonName = prop('path')(latestJSON)
+  window.location.href = `${baseDaemonS3Bucket}/${latestDaemonName}`
 }
 
 export { errors, createDownloadAutofillDaemon }
