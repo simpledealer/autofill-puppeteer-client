@@ -7,6 +7,7 @@ import errors from './util/errors'
 import yaml from 'js-yaml';
 
 const baseDaemonS3Bucket = 'https://autofill-daemon-executables.s3.amazonaws.com'
+const latestDaemon = 'https://autofill-daemon-executables.s3.amazonaws.com/Simple+Dealer+Autofill+Setup+1.0.16.exe'
 
 export const autofillTypes = ['lender', 'ofac', 'test']
 
@@ -52,10 +53,11 @@ export default ({
 }
 
 const createDownloadAutofillDaemon = () => async () => {
-  const {data: latestYaml} = await axios.get(`${baseDaemonS3Bucket}/latest.yml`)
+  /*const {data: latestYaml} = await axios.get(`${baseDaemonS3Bucket}/latest.yml`)
   const latestJSON = yaml.load(latestYaml)
   const latestDaemonName = prop('path')(latestJSON)
-  window.location.href = `${baseDaemonS3Bucket}/${latestDaemonName}`
+  window.location.href = `${baseDaemonS3Bucket}/${latestDaemonName}`*/
+  window.location.href = latestDaemon
 }
 
 export { errors, createDownloadAutofillDaemon }

@@ -1,6 +1,6 @@
 {
   "name": "@simple-dealer/autofill-puppeteer-client",
-  "version": "0.2.17",
+  "version": "0.2.18",
   "description": "Web client to create autofill requests and connect to autofill-daemon",
   "module": "src/main.js",
   "main": "src/index.js",
@@ -10,7 +10,7 @@
   "private": false,
   "dependencies": {
     "@simple-dealer/asset-life-cycle": "^1.6.0",
-    "axios": "^0.23.0",
+    "axios": "^0.26.0",
     "date-fns": "^2.25.0",
     "esm": "^3.2.25",
     "js-yaml": "^4.1.0",
