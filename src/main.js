@@ -1,6 +1,6 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { path, always, not, includes, prop, compose, replace, concat } from 'ramda'
+import { path, always, not, includes, prop, compose, replace, concat, allPass, has } from 'ramda'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 import errors from './util/errors'
@@ -15,8 +15,20 @@ export const validateAutofillType = autofillType => {
   if (not(includes(autofillType, autofillTypes))) throw errors.AutofillInvalidTypeError
 }
 
+export const validateHeaders = headers => {
+  const hasAllHeaders = allPass([
+    has('x-api-key'),
+    has('x-sd-store-id'),
+    has('x-sd-user-id'),
+    has('Authorization')
+  ])(headers)
+  if(not(hasAllHeaders)) throw errors.AutofillInvalidHeaders
+  return true
+}
+
 export default ({
   s3: { accessKeyId, secretAccessKey, region },
+  headers = {},
   getVersion = always('v1')
 }) => async ({
   mainApplicant,
@@ -27,11 +39,12 @@ export default ({
   lenders,
   type = 'lender'
 }) => {
+  validateHeaders(headers)
   validateAutofillType(type)
   const applicationId = path(['id'], mainApplicant)
   const dealershipId = path(['dealership', 'id'], mainApplicant)
   const prefix = getDatePrefix()
-  const requestBody = JSON.stringify({ mainApplicant, coApplicant, deal, userInformation, version, lenders, type })
+  const requestBody = JSON.stringify({ mainApplicant, coApplicant, deal, userInformation, version, lenders, type, headers })
   const requestMetadata = {
     uuid: getUuid(),
     resultOrQueue: 'queue',
