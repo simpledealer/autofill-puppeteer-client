@@ -35,7 +35,6 @@ export default ({
   coApplicant,
   deal,
   userInformation,
-  version = '3.2.0',
   lenders,
   type = 'lender'
 }) => {
@@ -44,7 +43,7 @@ export default ({
   const applicationId = path(['id'], mainApplicant)
   const dealershipId = path(['dealership', 'id'], mainApplicant)
   const prefix = getDatePrefix()
-  const requestBody = JSON.stringify({ mainApplicant, coApplicant, deal, userInformation, version, lenders, type, headers })
+  const requestBody = JSON.stringify({ version: '4.0.0', mainApplicant, coApplicant, deal, userInformation, lenders, type, headers })
   const requestMetadata = {
     uuid: getUuid(),
     resultOrQueue: 'queue',
