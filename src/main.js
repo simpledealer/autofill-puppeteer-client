@@ -1,11 +1,12 @@
 import createAssetClient from '@simple-dealer/asset-life-cycle'
 import { v4 as getUuid } from 'uuid'
-import { path, always, not, includes, prop, compose, replace, concat, allPass, has } from 'ramda'
+import { always, compose, concat, includes, not, path, prop, replace } from 'ramda'
+import yaml from 'js-yaml'
+import axios from 'axios'
 import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
+import createCheckForUpdates from './util/check-for-updates'
 import errors from './util/errors'
-import yaml from 'js-yaml';
-import axios from 'axios'
 
 const baseDaemonS3Bucket = 'https://autofill-daemon-executables.s3.amazonaws.com/'
 
@@ -13,17 +14,6 @@ export const autofillTypes = ['lender', 'ofac', 'test']
 
 export const validateAutofillType = autofillType => {
   if (not(includes(autofillType, autofillTypes))) throw errors.AutofillInvalidTypeError
-}
-
-export const validateHeaders = headers => {
-  const hasAllHeaders = allPass([
-    has('x-api-key'),
-    has('x-sd-store-id'),
-    has('x-sd-user-id'),
-    has('Authorization')
-  ])(headers)
-  if(not(hasAllHeaders)) throw errors.AutofillInvalidHeaders
-  return true
 }
 
 export default ({
@@ -38,7 +28,6 @@ export default ({
   lenders,
   type = 'lender'
 }) => {
-  validateHeaders(headers)
   validateAutofillType(type)
   const applicationId = path(['id'], mainApplicant)
   const dealershipId = path(['dealership', 'id'], mainApplicant)
@@ -58,17 +47,18 @@ export default ({
   const receivedRequest = await assetClient({ ...requestMetadata, assetType: 'status/received' })
   await pendingRequest.queue({ body: requestBody, ttl: 864000 })
   const requestKey = pendingRequest.getKey()
-  await connectDaemon(requestKey)
-  const autofillStarted = await receivedRequest.isAvailable()
-  if (not(autofillStarted)) throw errors.AutofillUnknownError
-  return autofillStarted
+  connectDaemon(requestKey)
+  const receivedRequestAvailable = await receivedRequest.isAvailable()
+  const receivedRequestKey = receivedRequestAvailable ? receivedRequest.getKey() : null
+  const checkForUpdates = createCheckForUpdates({ s3: { accessKeyId, secretAccessKey, region } })
+  await checkForUpdates(receivedRequestKey)
 }
 
 const createDownloadAutofillDaemon = () => async () => {
-  const {data: latestYaml} = await axios.get(`${baseDaemonS3Bucket}latest.yml`)
+  const { data: latestYaml } = await axios.get(`${baseDaemonS3Bucket}latest.yml`)
   const latestJSON = yaml.load(latestYaml)
   const latestDaemonName = prop('path')(latestJSON)
-  const latestDaemonUrl = compose(replace(' ', '+') ,concat(baseDaemonS3Bucket))(latestDaemonName)
+  const latestDaemonUrl = compose(replace(' ', '+'), concat(baseDaemonS3Bucket))(latestDaemonName)
   window.open(latestDaemonUrl)
 }
 

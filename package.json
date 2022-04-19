@@ -1,6 +1,6 @@
 {
   "name": "@simple-dealer/autofill-puppeteer-client",
-  "version": "0.2.21",
+  "version": "1.0.0",
   "description": "Web client to create autofill requests and connect to autofill-daemon",
   "module": "src/main.js",
   "main": "src/index.js",
@@ -19,11 +19,12 @@
   },
   "devDependencies": {
     "ava": "^3.15.0",
+    "dotenv": "^16.0.0",
     "nyc": "^15.1.0",
     "standard": "^16.0.4"
   },
   "scripts": {
-    "lint": "standard",
+    "lint": "standard --fix",
     "test": "yarn run lint; ava",
     "report": "yarn run lint;nyc --reporter=html --reporter=text ava"
   }
