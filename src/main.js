@@ -7,8 +7,6 @@ import getDatePrefix from './util/get-date-prefix'
 import connectDaemon from './util/connect-daemon'
 import createCheckForUpdates from './util/check-for-updates'
 import errors from './util/errors'
-import yaml from 'js-yaml'
-import axios from 'axios'
 import { listenToDaemon } from './lib/websocket'
 
 const baseDaemonS3Bucket = 'https://autofill-daemon-executables.s3.amazonaws.com/'
