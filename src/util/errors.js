@@ -11,10 +11,14 @@ const AutofillInvalidHeaders = new Error('AutofillInvalidHeaders')
 AutofillInvalidHeaders.name = 'AutofillInvalidHeaders'
 AutofillInvalidHeaders.message = 'Invalid headers object. Headers object must contain [x-api-key, x-sd-user-id, x-sd-store-id, Authorization]'
 
+const AutofillOutdated = new Error('AutofillOutdated')
+AutofillOutdated.name = 'AutofillOutdated'
+AutofillOutdated.message = 'You are using an old version of autofill. Please download and install the new one'
 
 export default {
   DaemonNotInstalledError,
   AutofillUnknownError,
   AutofillInvalidTypeError,
-  AutofillInvalidHeaders
+  AutofillInvalidHeaders,
+  AutofillOutdated
 }

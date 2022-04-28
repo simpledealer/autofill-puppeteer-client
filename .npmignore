@@ -12,3 +12,4 @@ tmp
 .nvmrc
 ava.config.js
 nyc.config.js
+.env.local
