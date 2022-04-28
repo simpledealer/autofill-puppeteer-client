@@ -1,6 +1,6 @@
 {
   "name": "@simple-dealer/autofill-puppeteer-client",
-  "version": "0.2.21",
+  "version": "0.3.0",
   "description": "Web client to create autofill requests and connect to autofill-daemon",
   "module": "src/main.js",
   "main": "src/index.js",
@@ -15,6 +15,7 @@
     "esm": "^3.2.25",
     "js-yaml": "^4.1.0",
     "ramda": "^0.27.1",
+    "reconnecting-websocket": "^4.4.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
