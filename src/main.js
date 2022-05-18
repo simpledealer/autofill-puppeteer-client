@@ -28,31 +28,31 @@ export default ({
   lenders,
   type = 'lender'
 }) => {
-  validateAutofillType(type)
-  const applicationId = path(['id'], mainApplicant)
-  const dealershipId = path(['dealership', 'id'], mainApplicant)
-  const prefix = getDatePrefix()
-  const requestBody = JSON.stringify({ version: '4.0.0', mainApplicant, coApplicant, deal, userInformation, lenders, type, headers })
-  const requestMetadata = {
-    uuid: getUuid(),
-    resultOrQueue: 'queue',
-    applicationId,
-    dealershipId
+    validateAutofillType(type)
+    const applicationId = path(['id'], mainApplicant)
+    const dealershipId = path(['dealership', 'id'], mainApplicant)
+    const prefix = getDatePrefix()
+    const requestBody = JSON.stringify({ version: '4.0.0', mainApplicant, coApplicant, deal, userInformation, lenders, type, headers })
+    const requestMetadata = {
+      uuid: getUuid(),
+      resultOrQueue: 'queue',
+      applicationId,
+      dealershipId
+    }
+    const assetClient = createAssetClient({
+      s3: { accessKeyId, secretAccessKey, region, bucket: 'autofill-daemon-data' },
+      getVersion
+    })((prefix))
+    const pendingRequest = await assetClient({ ...requestMetadata, assetType: 'status/pending' })
+    const receivedRequest = await assetClient({ ...requestMetadata, assetType: 'status/received' })
+    await pendingRequest.queue({ body: requestBody, ttl: 864000 })
+    const requestKey = pendingRequest.getKey()
+    connectDaemon(requestKey)
+    const receivedRequestAvailable = await receivedRequest.isAvailable()
+    const receivedRequestKey = receivedRequestAvailable ? receivedRequest.getKey() : null
+    const checkForUpdates = createCheckForUpdates({ s3: { accessKeyId, secretAccessKey, region } })
+    await checkForUpdates(receivedRequestKey)
   }
-  const assetClient = createAssetClient({
-    s3: { accessKeyId, secretAccessKey, region, bucket: 'autofill-daemon-data' },
-    getVersion
-  })((prefix))
-  const pendingRequest = await assetClient({ ...requestMetadata, assetType: 'status/pending' })
-  const receivedRequest = await assetClient({ ...requestMetadata, assetType: 'status/received' })
-  await pendingRequest.queue({ body: requestBody, ttl: 864000 })
-  const requestKey = pendingRequest.getKey()
-  connectDaemon(requestKey)
-  const receivedRequestAvailable = await receivedRequest.isAvailable()
-  const receivedRequestKey = receivedRequestAvailable ? receivedRequest.getKey() : null
-  const checkForUpdates = createCheckForUpdates({ s3: { accessKeyId, secretAccessKey, region } })
-  await checkForUpdates(receivedRequestKey)
-}
 
 const createDownloadAutofillDaemon = () => async () => {
   const { data: latestYaml } = await axios.get(`${baseDaemonS3Bucket}latest.yml`)
