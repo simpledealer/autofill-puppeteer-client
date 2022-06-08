@@ -10,7 +10,7 @@ import errors from './util/errors'
 
 const baseDaemonS3Bucket = 'https://autofill-daemon-executables.s3.amazonaws.com/'
 
-export const autofillTypes = ['lender', 'ofac', 'test']
+export const autofillTypes = ['autofill', 'ofac', 'test']
 
 export const validateAutofillType = autofillType => {
   if (not(includes(autofillType, autofillTypes))) throw errors.AutofillInvalidTypeError
@@ -25,14 +25,15 @@ export default ({
   coApplicant,
   deal,
   userInformation,
-  lenders,
-  type = 'lender'
+  lenders = [],
+  insurers = [],
+  type = 'autofill'
 }) => {
   validateAutofillType(type)
   const applicationId = path(['id'], mainApplicant)
   const dealershipId = path(['dealership', 'id'], mainApplicant)
   const prefix = getDatePrefix()
-  const requestBody = JSON.stringify({ version: '4.0.0', mainApplicant, coApplicant, deal, userInformation, lenders, type, headers })
+  const requestBody = JSON.stringify({ version: '4.0.0', mainApplicant, coApplicant, deal, userInformation, lenders, insurers, type, headers })
   const requestMetadata = {
     uuid: getUuid(),
     resultOrQueue: 'queue',
