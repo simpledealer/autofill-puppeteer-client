@@ -115,4 +115,5 @@ serverless.yml
 
 tmp
 
+.vscode
 .env.local
