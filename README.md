@@ -1,9 +1,10 @@
 ## Description
+
 Client library to connect to Simple Dealer's Autofill from the web
 
 ## Pre-Requisites
-- [Simple Dealer Autofill](https://github.com/simpledealer/autofill-daemon/releases/download/v0.1.0/Simple.Dealer.Autofill-0.1.0.dmg)
 
+- [Simple Dealer Autofill](https://github.com/simpledealer/autofill-daemon/releases/download/v0.1.0/Simple.Dealer.Autofill-0.1.0.dmg)
 
 ## Installation
 
@@ -21,57 +22,66 @@ $ yarn add @simple-dealer/autofill-puppeteer-client
 
 ## Usage
 
-
 ### Connect to autofill client
-```js
-import createAutoFillClient, { createDownloadAutofillDaemon, errors } from '@simple-dealer/autofill-puppeteer-client'
 
-const s3 = { 
+```js
+import {
+  createDownloadAutofillDaemon,
+  errors,
+  createHandleAutofillS3,
+  createHandleAutofillWs,
+  listenToDaemon
+} from '@simple-dealer/autofill-puppeteer-client'
+
+const s3 = {
   accessKeyId: '',
   secretAccessKey: '',
   region: ''
 };
 
-
-const autoFillClient = createAutoFillClient({ s3 })
+const { connected } = listenToDaemon()
+const autoFillClient = connected ? createHandleAutofillWs() : createHandleAutofillS3({ s3 })
 const downloadAutofillDaemon = createDownloadAutofillDaemon()
 ```
 
 ### Autofill lender
+
 ```js
-try{
+try {
   await autoFillClient({
     lenders,
     mainApplicant,
-    coApplicant, 
+    coApplicant,
     deal,
     userInformation,
     type: 'lender'
   })
   alert('Autofill started')
-}catch (e) {
-  if(equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
-  if(equals(e, errors.AutofillUnknownError)) alert ('Unknown error occurred')
+} catch (e) {
+  if (equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
+  if (equals(e, errors.AutofillUnknownError)) alert('Unknown error occurred')
 }
 ```
 
 ### Autofill OFAC
+
 ```js
-try{
+try {
   await autoFillClient({
     mainApplicant,
     type: 'ofac'
   })
   alert('Autofill started')
-}catch (e) {
-  if(equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
-  if(equals(e, errors.AutofillUnknownError)) alert ('Unknown error occurred')
+} catch (e) {
+  if (equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
+  if (equals(e, errors.AutofillUnknownError)) alert('Unknown error occurred')
 }
 ```
 
 ### Test Lender
+
 ```js
-try{
+try {
   await autoFillClient({
     lenders: [
       {
@@ -87,9 +97,9 @@ try{
     type: 'test'
   })
   alert('Autofill started')
-}catch (e) {
-  if(equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
-  if(equals(e, errors.AutofillUnknownError)) alert ('Unknown error occurred')
+} catch (e) {
+  if (equals(e, errors.DaemonNotInstalledError)) downloadAutofillDaemon()
+  if (equals(e, errors.AutofillUnknownError)) alert('Unknown error occurred')
 }
 ```
 
