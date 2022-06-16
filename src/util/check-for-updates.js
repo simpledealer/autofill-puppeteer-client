@@ -8,7 +8,6 @@ export const latestDaemonUrl = 'https://autofill-daemon-executables.s3.amazonaws
 
 export default ({ s3 }) => async receivedRequestKey => {
   if (!receivedRequestKey) {
-    console.log('You have to update to the latest daemon - no s3')
     throw errors.AutofillOutdated
   }
 
@@ -26,10 +25,7 @@ export default ({ s3 }) => async receivedRequestKey => {
   const latestJSON = yaml.load(latestYaml)
   const latestDaemonVersion = prop('version')(latestJSON)
 
-  console.log('Current and latest', currentDaemonVersion, latestDaemonVersion)
-
   if (not(equals(currentDaemonVersion, latestDaemonVersion))) {
-    console.log('You have to update to the latest daemon')
     throw errors.AutofillOutdated
   }
 }

@@ -1,7 +1,10 @@
 import WebSocket from 'reconnecting-websocket'
 import { v4 as uuid } from 'uuid'
-import { values } from 'ramda'
+import { always, path, values } from 'ramda'
+import getDatePrefix from '../util/get-date-prefix'
+import { validateAutofillType } from '../util/autofill-types'
 
+/** @type {WebSocket} **/
 let ws
 const wsListeners = { open: {}, error: {}, message: {}, close: {} }
 let wsConnected = false
@@ -78,4 +81,34 @@ export const listenToDaemon = ({
       removeWSListener({ key: 'close', ref })
     }
   }
+}
+
+export const createHandleAutofillWs = ({
+  headers = {}
+  // getVersion = always('v1')
+} = {}) => async ({
+  mainApplicant,
+  coApplicant,
+  deal,
+  userInformation,
+  lenders = [],
+  insurers = [],
+  type = 'autofill'
+}) => {
+  validateAutofillType(type)
+  const data = {
+    version: '4.0.0',
+    mainApplicant,
+    coApplicant,
+    deal,
+    userInformation,
+    lenders,
+    insurers,
+    type,
+    headers
+  }
+  ws.send(JSON.stringify({
+    type: 'autofill',
+    data: data
+  }))
 }
