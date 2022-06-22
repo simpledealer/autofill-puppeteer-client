@@ -1,7 +1,6 @@
 import WebSocket from 'reconnecting-websocket'
 import { v4 as uuid } from 'uuid'
-import { always, path, values } from 'ramda'
-import getDatePrefix from '../util/get-date-prefix'
+import { values } from 'ramda'
 import { validateAutofillType } from '../util/autofill-types'
 
 /** @type {WebSocket} **/
@@ -93,7 +92,8 @@ export const createHandleAutofillWs = ({
   userInformation,
   lenders = [],
   insurers = [],
-  type = 'autofill'
+  type = 'autofill',
+  timestamp = new Date()
 }) => {
   validateAutofillType(type)
   const data = {
@@ -105,7 +105,8 @@ export const createHandleAutofillWs = ({
     lenders,
     insurers,
     type,
-    headers
+    headers,
+    timestamp
   }
   ws.send(JSON.stringify({
     type: 'autofill',

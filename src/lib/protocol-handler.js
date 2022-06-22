@@ -19,13 +19,14 @@ export const createHandleAutofillS3 = (
   userInformation,
   lenders = [],
   insurers = [],
-  type = 'autofill'
+  type = 'autofill',
+  timestamp = new Date()
 }) => {
   validateAutofillType(type)
   const applicationId = path(['id'], mainApplicant)
   const dealershipId = path(['dealership', 'id'], mainApplicant)
   const prefix = getDatePrefix()
-  const requestBody = JSON.stringify({ version: '4.0.0', mainApplicant, coApplicant, deal, userInformation, lenders, insurers, type, headers })
+  const requestBody = JSON.stringify({ version: '4.0.0', mainApplicant, coApplicant, deal, userInformation, lenders, insurers, type, headers, timestamp })
   const requestMetadata = {
     uuid: getUuid(),
     resultOrQueue: 'queue',
